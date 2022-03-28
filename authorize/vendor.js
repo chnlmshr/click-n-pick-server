@@ -13,7 +13,7 @@ const authorizeVendor = (req, res, next) => {
           if (err) {
             res.send({ err: "Something went wrong while finding User!" });
           } else if (
-            user?.username !== req.headers["authorization"].split(" ")[1]
+            user?.phone != req.headers["authorization"].split(" ")[1]
           ) {
             res.send({ err: "User Unauthorized!" });
           } else {

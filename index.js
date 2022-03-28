@@ -19,6 +19,7 @@ mongoose
 
 app.use("/auth", require("./routes/authentication"));
 app.use("/post", require("./routes/post"));
+app.use("/connections", require("./routes/connections"));
 
 app.listen(process.env.PORT || 3001, () => {
   console.log(`Server running on ${process.env.PORT || 3001}`);

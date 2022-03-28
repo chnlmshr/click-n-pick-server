@@ -33,5 +33,15 @@ const VendorSchema = mongoose.Schema({
     required: true,
     unique: true,
   },
+  followers: [
+    {
+      type: mongoose.Types.ObjectId,
+    },
+  ],
+  following: [
+    {
+      type: mongoose.Types.ObjectId,
+    },
+  ],
 });
 module.exports = mongoose.model("Vendor", VendorSchema);

@@ -14,5 +14,10 @@ const CustomerSchema = mongoose.Schema({
     required: true,
     unique: true,
   },
+  following: [
+    {
+      type: mongoose.Types.ObjectId,
+    },
+  ],
 });
 module.exports = mongoose.model("Customer", CustomerSchema);
