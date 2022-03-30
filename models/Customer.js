@@ -19,5 +19,19 @@ const CustomerSchema = mongoose.Schema({
       type: mongoose.Types.ObjectId,
     },
   ],
+  location: {
+    pincode: {
+      type: Number,
+      required: true,
+    },
+    city: {
+      type: String,
+      required: true,
+    },
+    state: {
+      type: String,
+      required: true,
+    },
+  },
 });
 module.exports = mongoose.model("Customer", CustomerSchema);

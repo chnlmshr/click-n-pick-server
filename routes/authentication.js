@@ -35,6 +35,11 @@ router.post("/signup", async (req, res) => {
         name: req.body.name,
         password: securePassword,
         phone: req.body.phone,
+        location: {
+          city: req.body.city,
+          state: req.body.state,
+          pincode: req.body.pincode,
+        },
       });
       res.send({ success: true, user: customer });
     } else {
