@@ -6,68 +6,43 @@ const router = require("express").Router(),
   VENDOR = "VENDOR",
   CUSTOMER = "CUSTOMER";
 
-router.post("/signup", (req, res) => {
-  Vendor.exists(
-    { $or: [{ username: req.body.username }, { phone: req.body.phone }] },
-    async (err, exists) => {
-      if (err) {
-        console.log("##signup/exists##", err);
-        res.send({ success: false, err: "Server Error!" });
-      } else if (exists)
-        res.send({ success: false, err: "Credentials Already Exist!" });
+router.post("/signup", async (req, res) => {
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const securePassword = await bcrypt.hash(req.body.password, salt);
+    if (req?.body?.role === VENDOR) {
+      const vendorExists = await Vendor.exists({
+        $or: [{ username: req.body.username }, { phone: req.body.phone }],
+      });
+      if (vendorExists)
+        res.send({ success: false, error: "Venor already exists!" });
       else {
-        const salt = await bcrypt.genSalt(10);
-        bcrypt.hash(req.body.password, salt, (err, securePassword) => {
-          if (err) {
-            console.log("##signup/hash##", err);
-            res.send({ success: false, err: "Server Error!" });
-          } else {
-            if (req?.body?.role === VENDOR) {
-              Vendor.create(
-                {
-                  shopName: req.body.shopName,
-                  username: req.body.username,
-                  password: securePassword,
-                  phone: req.body.phone,
-                  location: {
-                    city: req.body.city,
-                    state: req.body.state,
-                    pincode: req.body.pincode,
-                  },
-                },
-                (err, user) => {
-                  if (err || !user) {
-                    console.log("##signup/create/vendor##", err);
-                    res.send({ success: false, err: "Server Error!" });
-                  } else {
-                    res.send({ success: true, user: user });
-                  }
-                }
-              );
-            } else if (req?.body?.role === CUSTOMER) {
-              Customer.create(
-                {
-                  name: req.body.name,
-                  password: securePassword,
-                  phone: req.body.phone,
-                },
-                (err, user) => {
-                  if (err || !user) {
-                    console.log("##signup/create/cutomer##", err);
-                    res.send({ success: false, err: "Server Error!" });
-                  } else {
-                    res.send({ success: true, user: user });
-                  }
-                }
-              );
-            } else {
-              res.send({ success: false, err: "Invalid Role" });
-            }
-          }
+        await Vendor.create({
+          shopName: req.body.shopName,
+          username: req.body.username,
+          password: securePassword,
+          phone: req.body.phone,
+          location: {
+            city: req.body.city,
+            state: req.body.state,
+            pincode: req.body.pincode,
+          },
         });
+        res.send({ success: true });
       }
+    } else if (req?.body?.role === CUSTOMER) {
+      const customer = await Customer.create({
+        name: req.body.name,
+        password: securePassword,
+        phone: req.body.phone,
+      });
+      res.send({ success: true, user: customer });
+    } else {
+      res.send({ success: false, error: "Invalid Role" });
     }
-  );
+  } catch (error) {
+    res.send({ success: false, error: error.toString() });
+  }
 });
 
 router.post("/login", (req, res) => {
