@@ -13,7 +13,7 @@ router.post("/create", authorizeVendor, async (req, res) => {
         productName: req.body.productName,
         availabilty: req.body.availabilty,
         description: req.body.description,
-        shopkeeper: req.userid,
+        vendor: req.userid,
         time: new Date(),
         price: req.body.price,
         images: req.body.images,
