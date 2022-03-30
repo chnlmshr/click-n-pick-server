@@ -5,8 +5,9 @@ const PostSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  shopkeeper: {
+  vendor: {
     type: mongoose.Types.ObjectId,
+    ref: "VendorSchema",
     required: true,
   },
   availabilty: {

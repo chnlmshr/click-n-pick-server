@@ -92,6 +92,8 @@ describe("/signup", () => {
     expect(res.body.success).toBe(true);
     expect(res2.body.success).toBe(false);
     expect(res3.body.success).toBe(false);
+    await Vendor.deleteMany();
+    await Customer.deleteMany();
   });
 
   it("disallow duplicate cutomers", async () => {
@@ -117,10 +119,41 @@ describe("/signup", () => {
 
     expect(res.body.success).toBe(true);
     expect(res2.body.success).toBe(false);
+    await Vendor.deleteMany();
+    await Customer.deleteMany();
   });
 });
 
-afterEach(async () => {
-  await Vendor.deleteMany();
-  await Customer.deleteMany();
+describe("/login", () => {
+  it("vendor login successfull", async () => {
+    // seeding
+    await request.post("/auth/signup").send({
+      role: "VENDOR",
+      shopName: "test shop",
+      username: "test name",
+      password: "123456",
+      phone: 12345567890,
+      city: "test city",
+      state: "test state",
+      pincode: 123456,
+    });
+
+    // login
+    const res = await request.post("/auth/login").send({
+      role: "VENDOR",
+      phone: 12345567890,
+      password: "123456",
+    });
+
+    console.log(res.body);
+    expect(res.body.success).toBe(true);
+    // const vendor = await Vendor.findOne({ phone: 12345567890 });
+    // expect(res.body.success).toBe(true);
+    // expect(vendor.username).toBe("test name");
+    // expect(vendor.shopName).toBe("test shop");
+    // expect(vendor.password).toBeTruthy();
+    // expect(vendor.location.city).toBe("test city");
+    // expect(vendor.location.state).toBe("test state");
+    // expect(vendor.location.pincode).toBe(123456);
+  });
 });
