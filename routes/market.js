@@ -1,103 +1,46 @@
-const authorizeVendor = require("../authorize/vendor"),
-  authorizeCustomer = require("../authorize/customer"),
+const authorize = require("../authorize"),
   router = require("express").Router(),
   Vendor = require("../models/Vendor"),
   Customer = require("../models/Customer"),
-  Post = require("../models/Post");
+  Post = require("../models/Post"),
+  { rejectRequestWith, respondWith } = require("../logistics");
 
-router.get("/c/hotdeals", authorizeCustomer, async (req, res) => {
-  if (!req.userid) return;
-  else {
-    try {
-      const location = await Customer.findById(req.userid).select(
-        "location -_id"
-      );
+router.get("/hotdeals", authorize, async (req, res) => {
+  try {
+    if (req.user) {
       const hotDeals = await Post.find({
-        pincode: location.pincode,
+        pincode: req.user.location.pincode,
       }).sort({ likes: "desc" });
-      res.send({ success: true, hotDeals: hotDeals });
-    } catch (error) {
-      res.send({ success: false, error: error.toStirng() });
-    }
+      respondWith(res, hotDeals);
+    } else throw "User Unauthorised!";
+  } catch (error) {
+    rejectRequestWith(res, error.toString());
   }
 });
 
-router.get("/v/hotdeals", authorizeVendor, async (req, res) => {
-  if (!req.userid) return;
-  else {
-    try {
-      const location = await Vendor.findById(req.userid).select(
-        "location -_id"
-      );
+router.get("/deals", authorize, async (req, res) => {
+  try {
+    if (req.user) {
       const hotDeals = await Post.find({
-        pincode: location.pincode,
-      }).sort({ likes: "desc" });
-      res.send({ success: true, hotDeals: hotDeals });
-    } catch (error) {
-      res.send({ success: false, error: error.toStirng() });
-    }
-  }
-});
-
-router.get("/v/deals", authorizeVendor, async (req, res) => {
-  if (!req.userid) return;
-  else {
-    try {
-      const location = await Vendor.findById(req.userid).select(
-        "location -_id"
-      );
-      const hotDeals = await Post.find({
-        pincode: location.pincode,
+        pincode: req.user.location.pincode,
       }).sort({ time: "desc" });
-      res.send({ success: true, hotDeals: hotDeals });
-    } catch (error) {
-      res.send({ success: false, error: error.toStirng() });
-    }
+      respondWith(res, hotDeals);
+    } else throw "User Unauthorised!";
+  } catch (error) {
+    rejectRequestWith(res, error.toString());
   }
 });
 
-router.get("/c/deals", authorizeVendor, async (req, res) => {
-  if (!req.userid) return;
-  else {
-    try {
-      const location = await Customer.findById(req.userid).select(
-        "location -_id"
-      );
-      const hotDeals = await Post.find({
-        pincode: location.pincode,
-      }).sort({ time: "desc" });
-      res.send({ success: true, hotDeals: hotDeals });
-    } catch (error) {
-      res.send({ success: false, error: error.toStirng() });
-    }
-  }
-});
-
-router.get("/v/trending", async (req, res) => {
-  if (!req.userid) return;
-  else {
-    try {
+router.get("/trending", async (req, res) => {
+  try {
+    if (req.user) {
       const trending = await Post.find({
         time: { $gt: new Date().getTime() - 86400000 },
       }).sort({ likes: "desc" });
-      res.send({ success: true, trending: trending });
-    } catch (error) {
-      res.send({ success: false, error: error.toStirng() });
-    }
-  }
-});
-
-router.get("/c/trending", async (req, res) => {
-  if (!req.userid) return;
-  else {
-    try {
-      const trending = await Post.find({
-        time: { $gt: new Date().getTime() - 86400000 },
-      }).sort({ likes: "desc" });
-      res.send({ success: true, trending: trending });
-    } catch (error) {
-      res.send({ success: false, error: error.toStirng() });
-    }
+      respondWith(res, trending);
+    } else throw "User Unauthorised!";
+  } catch (error) {
+    rejectRequestWith(res, error.toString());
   }
 });
 

@@ -26,11 +26,15 @@ const PostSchema = mongoose.Schema({
     type: Date,
     required: true,
   },
-  like: {
-    type: Number,
-    required: true,
+  likes: [
+    {
+      type: mongoose.Types.ObjectId,
+    },
+  ],
+  images: {
+    type: [String],
+    validate: (v) => Array.isArray(v) && v.length > 0,
   },
-  images: [{ type: String }],
 });
 
 module.exports = mongoose.model("Post", PostSchema);
