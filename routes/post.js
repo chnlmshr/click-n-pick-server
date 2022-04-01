@@ -1,67 +1,70 @@
-const authorizeVendor = require("../authorize/vendor"),
-  authorizeCustomer = require("../authorize/customer"),
-  router = require("express").Router(),
-  Vendor = require("../models/Vendor"),
-  Customer = require("../models/Customer"),
-  Post = require("../models/Post");
+const router = require("express").Router(),
+  Post = require("../models/Post"),
+  { rejectRequestWith, respondWith } = require("../logistics");
 
-router.post("/create", authorizeVendor, async (req, res) => {
-  if (!req.userid) return;
-  else {
-    try {
-      let post = await Post.create({
+router.post("/create", authorize, async (req, res) => {
+  try {
+    if (req.user) {
+      await Post.create({
         productName: req.body.productName,
         availabilty: req.body.availabilty,
         description: req.body.description,
-        vendor: req.userid,
+        vendor: req.user._id,
         time: new Date(),
         price: req.body.price,
         images: req.body.images,
       });
-      if (post) res.send({ success: true, post: post });
-      else res.send({ success: true, err: "Post not created!" });
-    } catch (error) {
-      res.send({ success: false, err: error.toString() });
-    }
+      respondWith(res, "Post Created!");
+    } else throw "User Unauthorised!";
+  } catch (error) {
+    rejectRequestWith(res, error.toString());
   }
 });
 
-router.get("/vendor/feed/:skip", authorizeVendor, async (req, res) => {
-  if (!req.userid) return;
-  else {
-    try {
-      const vendor = await Vendor.findById(req.userid);
+router.get("/feed/:skip", authorize, async (req, res) => {
+  try {
+    if (req.user) {
       const posts = await Post.find(
         {
-          shopkeeper: { $in: vendor.following },
+          shopkeeper: { $in: req.user.following },
         },
         undefined,
         { skip: req.params?.skip, limit: 10 }
       ).sort({ time: "desc" });
-      res.send({ success: true, posts: posts });
-    } catch (error) {
-      res.send({ success: false, err: "Something went wrong!" });
-    }
+      respondWith(res, posts);
+    } else throw "User Unauthorised!";
+  } catch (error) {
+    rejectRequestWith(res, error.toString());
   }
 });
 
-router.get("/customer/feed/:skip", authorizeCustomer, async (req, res) => {
-  if (!req.userid) return;
-  else {
-    try {
-      const customer = await Customer.findById(req.userid);
-      const posts = await Post.find(
-        {
-          shopkeeper: { $in: customer.following },
+router.put("/like", authorize, async (req, res) => {
+  try {
+    if (req.user) {
+      await Post.findByIdAndUpdate(req.body.postId, {
+        $addToSet: {
+          likes: req.user._id,
         },
-        undefined,
-        { skip: req.params?.skip, limit: 10 }
-      ).sort({ time: "desc" });
-      res.send({ success: true, posts: posts });
-    } catch (error) {
-      console.log(error);
-      res.send({ success: false, err: "Something went wrong!" });
-    }
+      });
+      respondWith(res, "Post Liked!");
+    } else throw "User Unauthorised!";
+  } catch (error) {
+    rejectRequestWith(res, error.toString());
+  }
+});
+
+router.put("/unlike", authorize, async (req, res) => {
+  try {
+    if (req.user) {
+      await Post.findByIdAndUpdate(req.body.postId, {
+        $pull: {
+          likes: req.user._id,
+        },
+      });
+      respondWith(res, "Post Unliked!");
+    } else throw "User Unauthorised!";
+  } catch (error) {
+    rejectRequestWith(res, error.toString());
   }
 });
 

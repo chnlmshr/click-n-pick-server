@@ -1,5 +1,5 @@
 Share links
 share multimedia in chat
-location in signup
+ location in signup
 flatlist instead  of scrollview
-like button for posts
+like button for posts 
