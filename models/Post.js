@@ -26,6 +26,10 @@ const PostSchema = mongoose.Schema({
     type: Date,
     required: true,
   },
+  like: {
+    type: Number,
+    required: true,
+  },
   images: [{ type: String }],
 });
 

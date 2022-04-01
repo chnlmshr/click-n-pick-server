@@ -35,12 +35,14 @@ const VendorSchema = mongoose.Schema({
   },
   followers: [
     {
-      type: mongoose.Types.ObjectId,
+      connectionName: String,
+      connectionId: mongoose.Types.ObjectId,
     },
   ],
   following: [
     {
-      type: mongoose.Types.ObjectId,
+      connectionName: String,
+      connectionId: mongoose.Types.ObjectId,
     },
   ],
 });

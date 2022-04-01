@@ -19,8 +19,9 @@ if (process.env.NODE_ENV !== "test") {
 }
 
 app.use("/auth", require("./routes/authentication"));
-app.use("/post", require("./routes/post"));
 app.use("/connections", require("./routes/connections"));
+// app.use("/post", require("./routes/post"));
+// app.use("/market", require("./routes/market"));
 
 if (process.env.NODE_ENV !== "test") {
   app.listen(process.env.PORT || 3001, () => {

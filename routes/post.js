@@ -21,7 +21,7 @@ router.post("/create", authorizeVendor, async (req, res) => {
       if (post) res.send({ success: true, post: post });
       else res.send({ success: true, err: "Post not created!" });
     } catch (error) {
-      res.send({ success: false, err: "Something went wrong!" });
+      res.send({ success: false, err: error.toString() });
     }
   }
 });
