@@ -16,6 +16,7 @@ const CustomerSchema = mongoose.Schema({
   },
   following: [
     {
+      _id: false,
       connectionName: String,
       connectionId: mongoose.Types.ObjectId,
     },

@@ -26,7 +26,7 @@ module.exports = {
   },
   initiateDB: (dbName) => {
     try {
-      beforeAll(async () => {
+      beforeEach(async () => {
         await mongoose.connect(
           `mongodb+srv://test:pick@cluster0.dvi1b.mongodb.net/${dbName}?retryWrites=true&w=majority`,
           {

@@ -8,8 +8,8 @@ router.get("/", authorize, async (req, res) => {
   try {
     if (req.user)
       respondWith(res, {
-        following: user.following,
-        followers: user.followers,
+        following: req.user.following,
+        followers: req.user.followers,
       });
     else throw "Can't fetch connections at the moment!";
   } catch (error) {
@@ -23,7 +23,7 @@ router.put("/follow", authorize, async (req, res) => {
       const connection = {
         followers: {
           connectionId: req.user?._id,
-          connectionName: req.user?.usernname,
+          connectionName: req.user?.username || req.user?.name,
         },
         following: {
           connectionId: req.body?.connectionId,
@@ -62,7 +62,7 @@ router.put("/unfollow", authorize, async (req, res) => {
       const connection = {
         followers: {
           connectionId: req.user?._id,
-          connectionName: req.user?.usernname,
+          connectionName: req.user?.username || req.user?.name,
         },
         following: {
           connectionId: req.body?.connectionId,
