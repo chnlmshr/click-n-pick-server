@@ -26,11 +26,9 @@ const PostSchema = mongoose.Schema({
     type: Date,
     required: true,
   },
-  likes: [
-    {
-      type: mongoose.Types.ObjectId,
-    },
-  ],
+  likes: {
+    type: Number,
+  },
   images: {
     type: [String],
     validate: (v) => Array.isArray(v) && v.length > 0,

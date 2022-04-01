@@ -15,6 +15,7 @@ if (process.env.NODE_ENV !== "test") {
       useUnifiedTopology: true,
       useNewUrlParser: true,
     })
+    .then(() => console.log("DB is Up!"))
     .catch((err) => console.log(err));
 }
 
