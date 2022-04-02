@@ -1,7 +1,8 @@
 const router = require("express").Router(),
   Post = require("../models/Post"),
   Review = require("../models/Review"),
-  { rejectRequestWith, respondWith } = require("../logistics");
+  { rejectRequestWith, respondWith } = require("../logistics"),
+  authorize = require("../authorize");
 
 router.post("/create", authorize, async (req, res) => {
   try {
