@@ -1,3 +1,4 @@
+const authorize = require("./authorize");
 const { rejectRequestWith, respondWith } = require("./logistics");
 
 const express = require("express"),
@@ -22,7 +23,7 @@ if (process.env.NODE_ENV !== "test") {
     .catch((err) => console.log(err));
 }
 
-app.get("/s3Url", async (req, res) => {
+app.get("/s3Url", authorize, async (req, res) => {
   try {
     const url = await generateUploadURL();
     console.log(url);
