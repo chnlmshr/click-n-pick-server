@@ -1,7 +1,10 @@
+const { rejectRequestWith, respondWith } = require("./logistics");
+
 const express = require("express"),
   mongoose = require("mongoose"),
   cors = require("cors"),
-  app = express();
+  app = express(),
+  { generateUploadURL } = require("./s3");
 
 require("dotenv").config();
 
@@ -18,6 +21,16 @@ if (process.env.NODE_ENV !== "test") {
     .then(() => console.log("DB is Up!"))
     .catch((err) => console.log(err));
 }
+
+app.get("/s3Url", async (req, res) => {
+  try {
+    const url = await generateUploadURL();
+    console.log(url);
+    respondWith(res, url);
+  } catch (error) {
+    rejectRequestWith(res, error.toString());
+  }
+});
 
 app.use("/auth", require("./routes/authentication"));
 app.use("/connections", require("./routes/connections"));
