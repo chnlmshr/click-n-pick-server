@@ -4,7 +4,7 @@ const router = require("express").Router(),
   { rejectRequestWith, respondWith } = require("../logistics"),
   authorize = require("../authorize");
 
-router.get("/", authorize, (req, res) => {
+router.get("/", authorize, async (req, res) => {
   try {
     const posts = await Post.find(
       {
@@ -15,7 +15,7 @@ router.get("/", authorize, (req, res) => {
       .populate("vendor")
       .sort({ time: "desc" });
     respondWith(res, posts);
-  } catch(error) {
+  } catch (error) {
     rejectRequestWith(res, error.toString());
   }
 });
