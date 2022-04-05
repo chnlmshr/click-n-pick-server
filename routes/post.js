@@ -25,11 +25,13 @@ router.get("/feed/:skip", authorize, async (req, res) => {
   try {
     const posts = await Post.find(
       {
-        shopkeeper: { $in: req.user?.following },
+        vendor: { $in: req.user?.following },
       },
       undefined,
       { skip: req.params?.skip, limit: 10 }
-    ).sort({ time: "desc" });
+    )
+      .populate("vendor")
+      .sort({ time: "desc" });
     respondWith(res, posts);
   } catch (error) {
     rejectRequestWith(res, error.toString());
