@@ -4,6 +4,22 @@ const router = require("express").Router(),
   { rejectRequestWith, respondWith } = require("../logistics"),
   authorize = require("../authorize");
 
+router.get("/", authorize, (req, res) => {
+  try {
+    const posts = await Post.find(
+      {
+        vendor: req.user._id,
+      },
+      undefined
+    )
+      .populate("vendor")
+      .sort({ time: "desc" });
+    respondWith(res, posts);
+  } catch(error) {
+    rejectRequestWith(res, error.toString());
+  }
+});
+
 router.post("/create", authorize, async (req, res) => {
   try {
     await Post.create({
