@@ -7,7 +7,7 @@ const PostSchema = mongoose.Schema({
   },
   vendor: {
     type: mongoose.Types.ObjectId,
-    ref: "VendorSchema",
+    ref: "Vendor",
     required: true,
   },
   availability: {
