@@ -8,7 +8,7 @@ router.post("/create", authorize, async (req, res) => {
   try {
     await Post.create({
       productName: req.body?.productName,
-      availabilty: req.body?.availabilty,
+      availability: req.body?.availability,
       description: req.body?.description,
       vendor: req.user?._id,
       time: new Date(),

@@ -10,7 +10,7 @@ const PostSchema = mongoose.Schema({
     ref: "VendorSchema",
     required: true,
   },
-  availabilty: {
+  availability: {
     type: String,
     required: true,
   },
