@@ -4,11 +4,11 @@ const router = require("express").Router(),
   { rejectRequestWith, respondWith } = require("../logistics"),
   authorize = require("../authorize");
 
-router.get("/", authorize, async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const posts = await Post.find(
       {
-        vendor: req.user._id,
+        vendor: req.params?.id,
       },
       undefined
     )
