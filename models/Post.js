@@ -33,6 +33,10 @@ const PostSchema = mongoose.Schema({
     type: [String],
     validate: (v) => Array.isArray(v) && v.length > 0,
   },
+  pincode: {
+    type: Number,
+    required: true,
+  },
 });
 
 module.exports = mongoose.model("Post", PostSchema);

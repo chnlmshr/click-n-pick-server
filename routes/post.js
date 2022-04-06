@@ -30,6 +30,7 @@ router.post("/create", authorize, async (req, res) => {
       time: new Date(),
       price: req.body?.price,
       images: req.body?.images,
+      pincode: req.user?.location.pincode,
     });
     respondWith(res, "Post Created!");
   } catch (error) {
