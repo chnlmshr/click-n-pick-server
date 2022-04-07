@@ -1,3 +1,5 @@
+const authorize = require("../authorize");
+
 const router = require("express").Router(),
   Vendor = require("../models/Vendor"),
   Customer = require("../models/Customer"),
@@ -72,6 +74,14 @@ router.post("/login", async (req, res) => {
         respondWith(res, authtoken);
       } else throw "Invalid Credentials";
     } else throw "Invalid Credentials";
+  } catch (error) {
+    rejectRequestWith(res, error.toString());
+  }
+});
+
+router.get("/", authorize, async (req, res) => {
+  try {
+    respondWith(res, req.user);
   } catch (error) {
     rejectRequestWith(res, error.toString());
   }
