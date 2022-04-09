@@ -4,11 +4,14 @@ const router = require("express").Router(),
   authorize = require("../authorize"),
   { respondWith, rejectRequestWith, roles } = require("../logistics");
 
-router.get("/", authorize, async (req, res) => {
+router.get("/:role/:id", async (req, res) => {
   try {
+    let user = false;
+    if (req.params.role === roles.VENDOR) user = Vendor.findById(req.params.id);
+    else user = Customer.findById(req.params.id);
     respondWith(res, {
-      following: req.user?.following,
-      followers: req.user?.followers,
+      following: user?.following,
+      followers: user?.followers,
     });
   } catch (error) {
     rejectRequestWith(res, error.toString());
