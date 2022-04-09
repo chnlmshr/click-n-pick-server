@@ -7,8 +7,9 @@ const router = require("express").Router(),
 router.get("/:role/:id", async (req, res) => {
   try {
     let user = false;
-    if (req.params.role === roles.VENDOR) user = Vendor.findById(req.params.id);
-    else user = Customer.findById(req.params.id);
+    if (req.params.role === roles.VENDOR)
+      user = await Vendor.findById(req.params.id);
+    else user = await Customer.findById(req.params.id);
     respondWith(res, {
       following: user?.following,
       followers: user?.followers,
