@@ -1,3 +1,5 @@
+const Notification = require("../models/Notification");
+
 const router = require("express").Router(),
   Vendor = require("../models/Vendor"),
   Customer = require("../models/Customer"),
@@ -50,7 +52,15 @@ router.put("/follow", authorize, async (req, res) => {
           following: connection.following,
         },
       });
-    respondWith(res, "Connection Established!");
+
+    await Notification.create({
+      fromConnectionId: connection.followers.connectionId,
+      fromConnectionName: connection.followers.connectionName,
+      toConnection: connection.following.connectionId,
+      action: "follow",
+    });
+
+    respondWith(res, "Connection Established and notification sent!");
   } catch (error) {
     rejectRequestWith(res, error.toString());
   }
