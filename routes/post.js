@@ -40,7 +40,7 @@ router.post("/create", authorize, async (req, res) => {
 
 router.get("/feed/:skip", authorize, async (req, res) => {
   try {
-    let followingList = req.user?.followingList.map(
+    let followingList = req.user?.following?.map(
       (following) => following.connectionId
     );
     const posts = await Post.find(
@@ -50,7 +50,7 @@ router.get("/feed/:skip", authorize, async (req, res) => {
       undefined,
       { skip: req.params?.skip, limit: 10 }
     )
-      .populate("vendor")
+      .populate("vendor", "_id username shopName")
       .sort({ time: "desc" });
     respondWith(res, posts);
   } catch (error) {
