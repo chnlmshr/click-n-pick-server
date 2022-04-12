@@ -40,9 +40,12 @@ router.post("/create", authorize, async (req, res) => {
 
 router.get("/feed/:skip", authorize, async (req, res) => {
   try {
+    let followingList = req.user?.followingList.map(
+      (following) => following.connectionId
+    );
     const posts = await Post.find(
       {
-        vendor: { $in: req.user?.following },
+        vendor: { $in: followingList },
       },
       undefined,
       { skip: req.params?.skip, limit: 10 }
