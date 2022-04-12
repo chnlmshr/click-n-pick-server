@@ -81,23 +81,60 @@ router.put("/unfollow", authorize, async (req, res) => {
 
     await Vendor.findByIdAndUpdate(connection.following.connectionId, {
       $pull: {
-        followers: connection.followers,
+        followers: { $eleMatch: connection.followers },
       },
     });
 
     if (req.role === roles.VENDOR)
       await Vendor.findByIdAndUpdate(connection.followers.connectionId, {
         $pull: {
-          following: connection.following,
+          following: { $eleMatch: connection.following },
         },
       });
     else
       await Customer.findByIdAndUpdate(connection.followers.connectionId, {
         $pull: {
-          following: connection.following,
+          following: { $eleMatch: connection.following },
         },
       });
     respondWith(res, "Connection Dropped!");
+  } catch (error) {
+    rejectRequestWith(res, error.toString());
+  }
+});
+
+router.put("/remove", authorize, async (req, res) => {
+  try {
+    const connection = {
+      followers: {
+        connectionId: req.user?._id,
+        connectionName: req.user?.username || req.user?.name,
+      },
+      following: {
+        connectionId: req.body?.connectionId,
+        connectionName: req.body?.connectionName,
+      },
+    };
+
+    await Vendor.findByIdAndUpdate(connection.followers.connectionId, {
+      $pull: {
+        followers: { $eleMatch: connection.following },
+      },
+    });
+
+    if (req.role === roles.VENDOR)
+      await Vendor.findByIdAndUpdate(connection.following.connectionId, {
+        $pull: {
+          following: { $eleMatch: connection.followers },
+        },
+      });
+    else
+      await Customer.findByIdAndUpdate(connection.following.connectionId, {
+        $pull: {
+          following: { $eleMatch: connection.followers },
+        },
+      });
+    respondWith(res, "Connection Removed!");
   } catch (error) {
     rejectRequestWith(res, error.toString());
   }
