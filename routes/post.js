@@ -88,11 +88,11 @@ router.put("/unlike", authorize, async (req, res) => {
   }
 });
 
-router.get("/isliked", authorize, async (req, res) => {
+router.get("/isliked:postId", authorize, async (req, res) => {
   try {
     const liked = await Review.exists({
       userId: req.user?._id,
-      postId: req.body?.postId,
+      postId: req.params?.postId,
     });
     respondWith(res, { liked: liked });
   } catch (error) {
