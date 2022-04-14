@@ -60,12 +60,12 @@ router.get("/feed/:skip", authorize, async (req, res) => {
 
 router.put("/like", authorize, async (req, res) => {
   try {
-    await Post.findByIdAndUpdate(req.body?.postId, {
-      $inc: { likes: 1 },
-    });
     await Review.create({
       postId: req.body?.postId,
       userId: req.user?._id,
+    });
+    await Post.findByIdAndUpdate(req.body?.postId, {
+      $inc: { likes: 1 },
     });
     respondWith(res, "Post Liked!");
   } catch (error) {
@@ -75,14 +75,26 @@ router.put("/like", authorize, async (req, res) => {
 
 router.put("/unlike", authorize, async (req, res) => {
   try {
-    await Post.findByIdAndUpdate(req.body?.postId, {
-      $inc: { likes: -1 },
-    });
     await Review.findOneAndDelete({
       userId: req.user?._id,
       postId: req.body?.postId,
     });
+    await Post.findByIdAndUpdate(req.body?.postId, {
+      $inc: { likes: -1 },
+    });
     respondWith(res, "Post Unliked!");
+  } catch (error) {
+    rejectRequestWith(res, error.toString());
+  }
+});
+
+router.get("/isliked", authorize, async (req, res) => {
+  try {
+    const liked = await Review.exists({
+      userId: req.user?._id,
+      postId: req.body?.postId,
+    });
+    respondWith(res, { liked: liked });
   } catch (error) {
     rejectRequestWith(res, error.toString());
   }
