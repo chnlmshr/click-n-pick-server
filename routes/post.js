@@ -88,7 +88,7 @@ router.put("/unlike", authorize, async (req, res) => {
   }
 });
 
-router.get("/isliked:postId", authorize, async (req, res) => {
+router.get("/isliked/:postId", authorize, async (req, res) => {
   try {
     const liked = await Review.exists({
       userId: req.user?._id,
