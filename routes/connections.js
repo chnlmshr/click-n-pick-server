@@ -81,20 +81,20 @@ router.put("/unfollow", authorize, async (req, res) => {
 
     await Vendor.findByIdAndUpdate(connection.following.connectionId, {
       $pull: {
-        followers: { $eleMatch: connection.followers },
+        followers: { $elemMatch: connection.followers },
       },
     });
 
     if (req.role === roles.VENDOR)
       await Vendor.findByIdAndUpdate(connection.followers.connectionId, {
         $pull: {
-          following: { $eleMatch: connection.following },
+          following: { $elemMatch: connection.following },
         },
       });
     else
       await Customer.findByIdAndUpdate(connection.followers.connectionId, {
         $pull: {
-          following: { $eleMatch: connection.following },
+          following: { $elemMatch: connection.following },
         },
       });
     respondWith(res, "Connection Dropped!");
@@ -118,20 +118,20 @@ router.put("/remove", authorize, async (req, res) => {
 
     await Vendor.findByIdAndUpdate(connection.followers.connectionId, {
       $pull: {
-        followers: { $eleMatch: connection.following },
+        followers: { $elemMatch: connection.following },
       },
     });
 
     if (req.role === roles.VENDOR)
       await Vendor.findByIdAndUpdate(connection.following.connectionId, {
         $pull: {
-          following: { $eleMatch: connection.followers },
+          following: { $elemMatch: connection.followers },
         },
       });
     else
       await Customer.findByIdAndUpdate(connection.following.connectionId, {
         $pull: {
-          following: { $eleMatch: connection.followers },
+          following: { $elemMatch: connection.followers },
         },
       });
     respondWith(res, "Connection Removed!");
