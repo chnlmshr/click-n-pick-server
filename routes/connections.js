@@ -79,23 +79,29 @@ router.put("/unfollow", authorize, async (req, res) => {
       },
     };
 
+    const vendor = await Vendor.findById(connection.following.connectionId);
+
+    const followers = vendor.followers?.filter(
+      (follower) => follower.connectionId.toString() != req.user?._id.toString()
+    );
+
     await Vendor.findByIdAndUpdate(connection.following.connectionId, {
-      $pull: {
-        followers: { $elemMatch: connection.followers },
-      },
+      followers: followers,
     });
+
+    const followings = req.user?.following.filter(
+      (following) =>
+        following.connectionId.toString() !=
+        connection.following.connectionId.toString()
+    );
 
     if (req.role === roles.VENDOR)
       await Vendor.findByIdAndUpdate(connection.followers.connectionId, {
-        $pull: {
-          following: { $elemMatch: connection.following },
-        },
+        following: followings,
       });
     else
       await Customer.findByIdAndUpdate(connection.followers.connectionId, {
-        $pull: {
-          following: { $elemMatch: connection.following },
-        },
+        following: followings,
       });
     respondWith(res, "Connection Dropped!");
   } catch (error) {
@@ -116,24 +122,41 @@ router.put("/remove", authorize, async (req, res) => {
       },
     };
 
+    const followers = req.user?.followers?.filter(
+      (follower) =>
+        follower.connectionId.toString() != req.body?.connectionId.toString()
+    );
+
     await Vendor.findByIdAndUpdate(connection.followers.connectionId, {
-      $pull: {
-        followers: { $elemMatch: connection.following },
-      },
+      followers: followers,
     });
 
-    if (req.role === roles.VENDOR)
+    if (req.role === roles.VENDOR) {
+      const vendor = await Vendor.findById(connection.following.connectionId);
+
+      const followings = vendor.following?.filter(
+        (following) =>
+          following.connectionId.toString() != req.user._id.toString()
+      );
+
       await Vendor.findByIdAndUpdate(connection.following.connectionId, {
-        $pull: {
-          following: { $elemMatch: connection.followers },
-        },
+        following: followings,
       });
-    else
+    } else {
+      const customer = await Customer.findById(
+        connection.following.connectionId
+      );
+
+      const followings = customer.followings?.filter(
+        (following) =>
+          following.connectionId.toString() != req.user._id.toString()
+      );
       await Customer.findByIdAndUpdate(connection.following.connectionId, {
         $pull: {
-          following: { $elemMatch: connection.followers },
+          following: followings,
         },
       });
+    }
     respondWith(res, "Connection Removed!");
   } catch (error) {
     rejectRequestWith(res, error.toString());
