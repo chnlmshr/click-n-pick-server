@@ -38,6 +38,7 @@ app.use("/connections", require("./routes/connections"));
 app.use("/post", require("./routes/post"));
 app.use("/market", require("./routes/market"));
 app.use("/notification", require("./routes/notification"));
+app.use("/search", require("./routes/search"));
 
 if (process.env.NODE_ENV !== "test") {
   app.listen(process.env.PORT || 3001, () => {
