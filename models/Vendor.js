@@ -49,12 +49,4 @@ const VendorSchema = mongoose.Schema({
   ],
 });
 
-VendorSchema.index({
-  "location.state": "text",
-  "location.pincode": "text",
-  "location.city": "text",
-  username: "text",
-  shopName: "text",
-});
-
 module.exports = mongoose.model("Vendor", VendorSchema);

@@ -2,23 +2,12 @@ const router = require("express").Router(),
   Vendor = require("../models/Vendor"),
   { rejectRequestWith, respondWith } = require("../logistics");
 
-router.get("/:searchterm", async (req, res) => {
+router.get("/searchterm/:searchterm", async (req, res) => {
   try {
     const usernameAgg = [
         {
           $search: {
             autocomplete: { query: req.params.searchterm, path: "username" },
-          },
-        },
-        { $project: { _id: 1, username: 1, location: 1, shopName: 1 } },
-      ],
-      pincodeAgg = [
-        {
-          $search: {
-            autocomplete: {
-              query: req.params.searchterm,
-              path: "location.pincode",
-            },
           },
         },
         { $project: { _id: 1, username: 1, location: 1, shopName: 1 } },
@@ -32,12 +21,22 @@ router.get("/:searchterm", async (req, res) => {
         { $project: { _id: 1, username: 1, location: 1, shopName: 1 } },
       ];
 
-    const [usernames, pincodes, shopNames] = await Promise.all([
+    const [usernames, shopNames] = await Promise.all([
       Vendor.aggregate(usernameAgg),
-      Vendor.aggregate(pincodeAgg),
       Vendor.aggregate(shopNameAgg),
     ]);
-    respondWith(res, { usernames, pincodes, shopNames });
+    respondWith(res, { usernames, shopNames });
+  } catch (error) {
+    rejectRequestWith(res, error.toString());
+  }
+});
+
+router.get("/pincode/:pincode", async (req, res) => {
+  try {
+    const vendors = await Vendor.find({
+      "location.pincode": req.params.pincode,
+    }).select("username location shopName");
+    respondWith(res, vendors);
   } catch (error) {
     rejectRequestWith(res, error.toString());
   }
