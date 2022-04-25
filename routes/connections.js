@@ -1,8 +1,7 @@
-const Notification = require("../models/Notification");
-
 const router = require("express").Router(),
   Vendor = require("../models/Vendor"),
   Customer = require("../models/Customer"),
+  Notification = require("../models/Notification"),
   authorize = require("../authorize"),
   { respondWith, rejectRequestWith, roles } = require("../logistics");
 

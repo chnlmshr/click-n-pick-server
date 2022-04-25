@@ -115,4 +115,16 @@ router.put("/", authorize, async (req, res) => {
   }
 });
 
+router.get("/:role/:id", async (req, res) => {
+  try {
+    let user = false;
+    if (req.params.role === roles.VENDOR)
+      user = await Vendor.findById(req.params.id, { password: 0 });
+    else user = await Customer.findById(req.params.id, { password: 0 });
+    respondWith(res, user);
+  } catch (error) {
+    rejectRequestWith(res, error.toString());
+  }
+});
+
 module.exports = router;

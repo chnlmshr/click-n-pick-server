@@ -16,7 +16,6 @@ const VendorSchema = mongoose.Schema({
   },
   profileImage: {
     type: String,
-    required: true,
   },
   location: {
     pincode: {

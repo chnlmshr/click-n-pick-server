@@ -26,7 +26,6 @@ if (process.env.NODE_ENV !== "test") {
 app.get("/s3Url", authorize, async (req, res) => {
   try {
     const url = await generateUploadURL();
-    console.log(url);
     respondWith(res, url);
   } catch (error) {
     rejectRequestWith(res, error.toString());
