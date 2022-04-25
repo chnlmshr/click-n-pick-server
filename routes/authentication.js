@@ -89,9 +89,24 @@ router.get("/", authorize, async (req, res) => {
 
 router.put("/", authorize, async (req, res) => {
   try {
+    const update = {
+      location: {
+        pincode: req.body?.location?.pincode?.length
+          ? req.body?.location?.pincode
+          : req.user?.location?.pincode,
+        city: req.body?.location?.city?.length
+          ? req.body?.location?.city?.length
+          : req.user?.location?.city?.length,
+        state: req.body?.location?.state?.length
+          ? req.body?.location?.state
+          : req.body?.location?.state,
+      },
+      profileImage: req.body?.profileImage,
+      shopName: req.body?.shopName,
+    };
     if (req.role === roles.VENDOR)
-      await Vendor.findByIdAndUpdate(req.user._id, { ...req.body });
-    else await Customer.findByIdAndUpdate(req.user._id, { ...req.body });
+      await Vendor.findByIdAndUpdate(req.user._id, update);
+    else await Customer.findByIdAndUpdate(req.user._id, update);
     respondWith(res, "User Info Updated!");
   } catch (error) {
     rejectRequestWith(res, error.toString());
