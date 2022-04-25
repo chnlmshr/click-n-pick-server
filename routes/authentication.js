@@ -102,7 +102,7 @@ router.put("/", authorize, async (req, res) => {
           : req.body?.location?.state,
       },
       profileImage: req.body?.profileImage,
-      shopName: req.body?.shopName.length
+      shopName: req.body?.shopName?.length
         ? req.body?.shopName
         : req.user.shopName,
     };
