@@ -99,12 +99,12 @@ router.put("/", authorize, async (req, res) => {
           : req.user?.location?.city,
         state: req.body?.location?.state?.length
           ? req.body?.location?.state
-          : req.body?.location?.state,
+          : req.user?.location?.state,
       },
       profileImage: req.body?.profileImage,
       shopName: req.body?.shopName?.length
         ? req.body?.shopName
-        : req.user.shopName,
+        : req.user?.shopName,
     };
     if (req.role === roles.VENDOR)
       await Vendor.findByIdAndUpdate(req.user._id, update);
