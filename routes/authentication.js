@@ -87,4 +87,15 @@ router.get("/", authorize, async (req, res) => {
   }
 });
 
+router.put("/", authorize, async (req, res) => {
+  try {
+    if (req.role === roles.VENDOR)
+      await Vendor.findByIdAndUpdate(req.user._id, { ...req.body });
+    else await Customer.findByIdAndUpdate(req.user._id, { ...req.body });
+    respondWith(res, "User Info Updated!");
+  } catch (error) {
+    rejectRequestWith(res, error.toString());
+  }
+});
+
 module.exports = router;
