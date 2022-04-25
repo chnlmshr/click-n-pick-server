@@ -95,8 +95,8 @@ router.put("/", authorize, async (req, res) => {
           ? req.body?.location?.pincode
           : req.user?.location?.pincode,
         city: req.body?.location?.city?.length
-          ? req.body?.location?.city?.length
-          : req.user?.location?.city?.length,
+          ? req.body?.location?.city
+          : req.user?.location?.city,
         state: req.body?.location?.state?.length
           ? req.body?.location?.state
           : req.body?.location?.state,
