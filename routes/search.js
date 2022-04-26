@@ -10,7 +10,15 @@ router.get("/searchterm/:searchterm", async (req, res) => {
             autocomplete: { query: req.params.searchterm, path: "username" },
           },
         },
-        { $project: { _id: 1, username: 1, location: 1, shopName: 1 } },
+        {
+          $project: {
+            _id: 1,
+            username: 1,
+            location: 1,
+            shopName: 1,
+            profileImage: 1,
+          },
+        },
       ],
       shopNameAgg = [
         {
@@ -18,7 +26,15 @@ router.get("/searchterm/:searchterm", async (req, res) => {
             autocomplete: { query: req.params.searchterm, path: "shopName" },
           },
         },
-        { $project: { _id: 1, username: 1, location: 1, shopName: 1 } },
+        {
+          $project: {
+            _id: 1,
+            username: 1,
+            location: 1,
+            shopName: 1,
+            profileImage: 1,
+          },
+        },
       ];
 
     const [usernames, shopNames] = await Promise.all([
@@ -35,7 +51,7 @@ router.get("/pincode/:pincode", async (req, res) => {
   try {
     const vendors = await Vendor.find({
       "location.pincode": req.params.pincode,
-    }).select("username location shopName");
+    }).select("username location shopName profileImage");
     respondWith(res, vendors);
   } catch (error) {
     rejectRequestWith(res, error.toString());
