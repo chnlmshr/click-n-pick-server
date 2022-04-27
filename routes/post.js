@@ -12,7 +12,7 @@ router.get("/postid/:id", async (req, res) => {
       },
       undefined
     )
-      .populate("vendor")
+      .populate("vendor", "_id username shopName profileImage")
       .sort({ time: "desc" });
     respondWith(res, posts);
   } catch (error) {
@@ -50,7 +50,7 @@ router.get("/feed/:skip", authorize, async (req, res) => {
       undefined,
       { skip: req.params?.skip, limit: 10 }
     )
-      .populate("vendor", "_id username shopName")
+      .populate("vendor", "_id username shopName profileImage")
       .sort({ time: "desc" });
     respondWith(res, posts);
   } catch (error) {

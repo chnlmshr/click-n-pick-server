@@ -8,7 +8,7 @@ router.get("/hotdeals", authorize, async (req, res) => {
     const hotDeals = await Post.find({
       pincode: req.user.location.pincode,
     })
-      .populate("vendor")
+      .populate("vendor", "_id username shopName profileImage")
       .sort({ likes: "desc" });
     respondWith(res, hotDeals);
   } catch (error) {
@@ -21,7 +21,7 @@ router.get("/deals", authorize, async (req, res) => {
     const hotDeals = await Post.find({
       pincode: req.user.location.pincode,
     })
-      .populate("vendor")
+      .populate("vendor", "_id username shopName profileImage")
       .sort({ time: "desc" });
     respondWith(res, hotDeals);
   } catch (error) {
@@ -34,7 +34,7 @@ router.get("/trending", async (req, res) => {
     const trending = await Post.find({
       time: { $gt: new Date().getTime() - 86400000 },
     })
-      .populate("vendor")
+      .populate("vendor", "_id username shopName profileImage")
       .sort({ likes: "desc" });
     respondWith(res, trending);
   } catch (error) {
