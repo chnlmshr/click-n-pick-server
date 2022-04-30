@@ -14,6 +14,9 @@ const CustomerSchema = mongoose.Schema({
     required: true,
     unique: true,
   },
+  profileImage: {
+    type: String,
+  },
   following: [
     {
       _id: false,
