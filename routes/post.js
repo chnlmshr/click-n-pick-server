@@ -38,14 +38,14 @@ router.post("/create", authorize, async (req, res) => {
   }
 });
 
-router.delete("/delete/:id", authorize, (req, res) => {
+router.delete("/delete/:id", authorize, async (req, res) => {
   try {
     await Post.findByIdAndRemove(req.params?.id);
     respondWith(res, "Post Deleted!");
   } catch (error) {
     rejectRequestWith(res, error.toString());
   }
-})
+});
 
 router.get("/feed/:skip", authorize, async (req, res) => {
   try {
