@@ -31,11 +31,17 @@ router.get("/deals", authorize, async (req, res) => {
 
 router.get("/trending", async (req, res) => {
   try {
-    const trending = await Post.find({
+    let trending = await Post.find({
       time: { $gt: new Date().getTime() - 86400000 },
     })
       .populate("vendor", "_id username shopName profileImage")
       .sort({ likes: "desc" });
+    if (trending.length < 3)
+      trending = await Post.find({
+        time: { $gt: new Date().getTime() - 62208000000 },
+      })
+        .populate("vendor", "_id username shopName profileImage")
+        .sort({ likes: "desc" });
     respondWith(res, trending);
   } catch (error) {
     rejectRequestWith(res, error.toString());
