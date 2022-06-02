@@ -36,6 +36,11 @@ const VendorSchema = mongoose.Schema({
     required: true,
     unique: true,
   },
+  recoveryPhone: {
+    type: Number,
+    required: true,
+    unique: true,
+  },
   followers: [
     {
       _id: false,

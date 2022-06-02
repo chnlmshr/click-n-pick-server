@@ -5,11 +5,12 @@ const CustomerSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  password: {
-    type: String,
-    required: true,
-  },
   phone: {
+    type: Number,
+    required: true,
+    unique: true,
+  },
+  recoveryPhone: {
     type: Number,
     required: true,
     unique: true,
@@ -39,4 +40,5 @@ const CustomerSchema = mongoose.Schema({
     },
   },
 });
+
 module.exports = mongoose.model("Customer", CustomerSchema);
