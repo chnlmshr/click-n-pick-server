@@ -23,6 +23,12 @@ if (process.env.NODE_ENV !== "test") {
     .catch((err) => console.log(err));
 }
 
+app.get("/", (req, res) =>
+  res.send(
+    "Welcome to Click and Pick API 👋.\n Visit https://chnlmshr.github.io/click-n-pick-landing/ to know more 🤗"
+  )
+);
+
 app.get("/s3Url", authorize, async (req, res) => {
   try {
     const url = await generateUploadURL();
@@ -38,6 +44,8 @@ app.use("/post", require("./routes/post"));
 app.use("/market", require("./routes/market"));
 app.use("/notification", require("./routes/notification"));
 app.use("/search", require("./routes/search"));
+
+app.use((req, res) => res.send("Sorry! This Route doesn't exist 😔"));
 
 if (process.env.NODE_ENV !== "test") {
   app.listen(process.env.PORT || 3001, () => {
