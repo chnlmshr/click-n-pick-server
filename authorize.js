@@ -11,9 +11,20 @@ module.exports = async (req, res, next) => {
     if (payload) {
       let user = false;
 
-      if (role === roles.VENDOR) user = await Vendor.findById(payload._id);
+      if (role === roles.VENDOR)
+        user = await Vendor.findById(payload._id, {
+          password: 0,
+          securityQuestion: 0,
+          securityAnswer: 0,
+          phone: 0,
+        });
       else if (role === roles.CUSTOMER)
-        user = await Customer.findById(payload._id);
+        user = await Customer.findById(payload._id, {
+          password: 0,
+          securityQuestion: 0,
+          securityAnswer: 0,
+          phone: 0,
+        });
       else throw "User Unauthorised!";
 
       if (user) {

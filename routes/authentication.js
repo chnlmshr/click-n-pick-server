@@ -1,11 +1,10 @@
-const authorize = require("../authorize");
-
 const router = require("express").Router(),
   Vendor = require("../models/Vendor"),
   Customer = require("../models/Customer"),
   jwt = require("jsonwebtoken"),
   bcrypt = require("bcryptjs"),
-  { roles, rejectRequestWith, respondWith } = require("../logistics");
+  { roles, rejectRequestWith, respondWith } = require("../logistics"),
+  authorize = require("../authorize");
 
 // Signing Up
 
@@ -89,6 +88,9 @@ router.get("/", authorize, async (req, res) => {
 
 router.put("/", authorize, async (req, res) => {
   try {
+    let securityAnswer = "";
+    if (req.body?.securityAnswer)
+      securityAnswer = await bcrypt.hash(req.body?.securityAnswer, 8);
     const update = {
       location: {
         pincode: req.body?.location?.pincode?.length
@@ -105,6 +107,10 @@ router.put("/", authorize, async (req, res) => {
       shopName: req.body?.shopName?.length
         ? req.body?.shopName
         : req.user?.shopName,
+      securityQuestion: req.body?.securityQuestion
+        ? req.body?.securityQuestion
+        : 0,
+      securityAnswer: securityAnswer,
     };
     if (req.role === roles.VENDOR)
       await Vendor.findByIdAndUpdate(req.user._id, update);
@@ -115,12 +121,74 @@ router.put("/", authorize, async (req, res) => {
   }
 });
 
+router.post("/validatesecurityquestion", async (req, res) => {
+  try {
+    let user = false;
+    if (req.body?.role === roles.VENDOR)
+      user = await Vendor.findOne({ phone: req.body?.phone });
+    else if (req.body?.role === roles.CUSTOMER)
+      user = await Customer.findOne({ phone: req.body?.phone });
+    if (user) {
+      const correctSecurityAnswer = await bcrypt.compare(
+        req.body?.securityAnswer,
+        user.securityAnswer
+      );
+
+      if (
+        correctSecurityAnswer &&
+        req.body?.securityQuestion == user.securityQuestion
+      ) {
+        respondWith(res, true);
+      } else throw "Invalid Credentials";
+    } else throw "Phone not registered!";
+  } catch (error) {
+    rejectRequestWith(res, error.toString());
+  }
+});
+
+router.post("/passwordreset", async (req, res) => {
+  try {
+    let user = false;
+    if (req.body?.role === roles.VENDOR)
+      user = await Vendor.findOne({ phone: req.body?.phone });
+    else if (req.body?.role === roles.CUSTOMER)
+      user = await Customer.findOne({ phone: req.body?.phone });
+    if (user) {
+      const correctSecurityAnswer = await bcrypt.compare(
+        req.body?.securityAnswer,
+        user.securityAnswer
+      );
+      if (
+        correctSecurityAnswer &&
+        req.body?.securityQuestion == user.securityQuestion
+      ) {
+        const securePassword = await bcrypt.hash(req.body?.password, 8);
+        if (req.body?.role === roles.VENDOR)
+          Vendor.findByIdAndUpdate(user._id, { password: securePassword });
+        else Customer.findByIdAndUpdate(user._id, { password: securePassword });
+        respondWith(res, "Password Updated");
+      } else throw "Invalid Credentials";
+    } else throw "Phone not registered!";
+  } catch (error) {
+    rejectRequestWith(res, error.toString());
+  }
+});
+
 router.get("/:role/:id", async (req, res) => {
   try {
     let user = false;
     if (req.params.role === roles.VENDOR)
-      user = await Vendor.findById(req.params.id, { password: 0 });
-    else user = await Customer.findById(req.params.id, { password: 0 });
+      user = await Vendor.findById(req.params.id, {
+        password: 0,
+        securityQuestion: 0,
+        securityAnswer: 0,
+      });
+    else
+      user = await Customer.findById(req.params.id, {
+        password: 0,
+        securityQuestion: 0,
+        securityAnswer: 0,
+      });
     respondWith(res, user);
   } catch (error) {
     rejectRequestWith(res, error.toString());

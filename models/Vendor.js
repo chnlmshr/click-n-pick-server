@@ -36,6 +36,14 @@ const VendorSchema = mongoose.Schema({
     required: true,
     unique: true,
   },
+  // 0 => Doesn't exist; 1 => First Pay; 2 => Lucky Number; 3 => School Roll Number;
+  securityQuestion: {
+    type: Number,
+    default: 0,
+  },
+  securityAnswer: {
+    type: String,
+  },
   followers: [
     {
       _id: false,
