@@ -5,7 +5,9 @@ const Customer = require("./models/Customer"),
 
 module.exports = async (req, res, next) => {
   try {
-    const [id, role] = await getId();
+    const [token, role] = req.headers["authorization"].split(" ");
+
+    const id = await getId(token);
 
     if (payload) {
       let user = false;
