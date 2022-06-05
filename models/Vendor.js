@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 
 const VendorSchema = mongoose.Schema({
+  _id: {
+    type: String,
+  },
   shopName: {
     type: String,
     required: true,
@@ -33,7 +36,6 @@ const VendorSchema = mongoose.Schema({
   },
   phone: {
     type: Number,
-    required: true,
     unique: true,
   },
   recoveryPhone: {

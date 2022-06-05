@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 
 const CustomerSchema = mongoose.Schema({
+  _id: {
+    type: String,
+  },
   name: {
     type: String,
     required: true,
@@ -12,7 +15,6 @@ const CustomerSchema = mongoose.Schema({
   },
   recoveryPhone: {
     type: Number,
-    required: true,
     unique: true,
   },
   profileImage: {

@@ -7,15 +7,15 @@ module.exports = async (req, res, next) => {
   try {
     const [token, role] = req.headers["authorization"].split(" ");
 
-    const id = await getId(token);
+    const payload = await getId(token);
 
     if (payload) {
       let user = false;
 
       if (role === roles.VENDOR)
-        user = await Vendor.findById(id, { password: 0 });
+        user = await Vendor.findById(payload.uid, { password: 0 });
       else if (role === roles.CUSTOMER)
-        user = await Customer.findById(id, { password: 0 });
+        user = await Customer.findById(payload.uid, { password: 0 });
       else throw "User Unauthorised!";
 
       if (user) {
