@@ -11,13 +11,14 @@ router.post("/signup", async (req, res) => {
   try {
     const [token, role] = req.headers["authorization"].split(" ");
     const payload = await getId(token);
+    console.log(payload);
 
     if (req.body?.role === roles.VENDOR) {
       let vendorExists = await Vendor.exists({ username: req.body?.username });
 
       if (vendorExists) throw "Username already exists!";
 
-      vendorExists = await Vendor.exists({ phone: req.body?.phone });
+      vendorExists = await Vendor.exists({ phone: payload.phone_number });
 
       if (vendorExists) throw "Phone already exists!";
 
@@ -25,7 +26,7 @@ router.post("/signup", async (req, res) => {
         _id: payload.uid,
         shopName: req.body?.shopName,
         username: req.body?.username,
-        phone: req.body?.phone,
+        phone: payload.phone_number,
         location: {
           city: req.body?.city,
           state: req.body?.state,
@@ -38,7 +39,7 @@ router.post("/signup", async (req, res) => {
       await Customer.create({
         _id: payload.uid,
         name: req.body?.name,
-        phone: req.body?.phone,
+        phone: payload.phone_number,
         location: {
           city: req.body?.city,
           state: req.body?.state,
