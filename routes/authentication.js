@@ -11,7 +11,6 @@ router.post("/signup", async (req, res) => {
   try {
     const [token, role] = req.headers["authorization"].split(" ");
     const payload = await getId(token);
-    console.log(payload);
 
     if (req.body?.role === roles.VENDOR) {
       let vendorExists = await Vendor.exists({ username: req.body?.username });

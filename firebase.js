@@ -6,7 +6,6 @@ const firebaseAdmin = require("firebase-admin"),
   });
 
 module.exports = async (token) => {
-  console.log(token);
   const payload = await firebaseAdmin.auth().verifyIdToken(token);
   return payload;
 };
