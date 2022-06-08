@@ -40,7 +40,6 @@ const VendorSchema = mongoose.Schema({
   },
   recoveryPhone: {
     type: Number,
-    required: true,
     unique: true,
   },
   followers: [

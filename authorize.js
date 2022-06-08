@@ -1,21 +1,30 @@
 const Customer = require("./models/Customer"),
   Vendor = require("./models/Vendor"),
-  { roles, rejectRequestWith } = require("./logistics"),
-  getId = require("./firebase");
+  jwt = require("jsonwebtoken"),
+  { roles, rejectRequestWith } = require("./logistics");
 
 module.exports = async (req, res, next) => {
   try {
-    const [token, role] = req.headers["authorization"].split(" ");
-
-    const payload = await getId(token);
+    const [token, role] = req.headers["authorization"].split(" "),
+      payload = jwt.verify(token, process.env.JWT_SECRET);
 
     if (payload) {
       let user = false;
 
       if (role === roles.VENDOR)
-        user = await Vendor.findById(payload.uid, { password: 0 });
+        user = await Vendor.findById(payload._id, {
+          password: 0,
+          securityQuestion: 0,
+          securityAnswer: 0,
+          phone: 0,
+        });
       else if (role === roles.CUSTOMER)
-        user = await Customer.findById(payload.uid, { password: 0 });
+        user = await Customer.findById(payload._id, {
+          password: 0,
+          securityQuestion: 0,
+          securityAnswer: 0,
+          phone: 0,
+        });
       else throw "User Unauthorised!";
 
       if (user) {

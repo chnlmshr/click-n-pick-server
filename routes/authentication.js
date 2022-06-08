@@ -3,9 +3,8 @@ const authorize = require("../authorize"),
   Vendor = require("../models/Vendor"),
   Customer = require("../models/Customer"),
   { roles, rejectRequestWith, respondWith } = require("../logistics"),
-  getId = require("../firebase");
-
-// Signing Up
+  getId = require("../firebase"),
+  jwt = require("jsonwebtoken");
 
 router.post("/signup", async (req, res) => {
   try {
@@ -32,8 +31,6 @@ router.post("/signup", async (req, res) => {
           pincode: req.body?.pincode,
         },
       });
-
-      respondWith(res, "Vendor Created!");
     } else if (req?.body?.role === roles.CUSTOMER) {
       await Customer.create({
         _id: payload.uid,
@@ -45,9 +42,29 @@ router.post("/signup", async (req, res) => {
           pincode: req.body?.pincode,
         },
       });
-
-      respondWith(res, "Customer Created!");
     } else throw "Invalid Role!";
+    const authtoken = jwt.sign({ _id: payload.uid }, process.env.JWT_SECRET);
+    respondWith(res, authtoken);
+  } catch (error) {
+    rejectRequestWith(res, error.toString());
+  }
+});
+
+router.post("/login", async (req, res) => {
+  try {
+    const [token, role] = req.headers["authorization"].split(" ");
+    const payload = await getId(token);
+    let exists = false;
+
+    if (req.body?.role === roles.VENDOR)
+      exists = await Vendor.exists({ phone: payload.phone_number });
+    else if (req?.body?.role === roles.CUSTOMER)
+      exists = await Customer.exists({ phone: payload.phone_number });
+    else throw "Invalid Role!";
+    if (exists) {
+      const authtoken = jwt.sign({ _id: payload.uid }, process.env.JWT_SECRET);
+      respondWith(res, authtoken);
+    } else throw "User Unauthorized!";
   } catch (error) {
     rejectRequestWith(res, error.toString());
   }
@@ -88,8 +105,6 @@ router.put("/", authorize, async (req, res) => {
     rejectRequestWith(res, error.toString());
   }
 });
-
-// router.get()
 
 router.get("/:role/:id", async (req, res) => {
   try {
