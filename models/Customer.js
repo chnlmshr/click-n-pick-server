@@ -24,7 +24,7 @@ const CustomerSchema = mongoose.Schema({
     {
       _id: false,
       connectionName: String,
-      connectionId: mongoose.Types.ObjectId,
+      connectionId: String,
     },
   ],
   location: {

@@ -57,7 +57,6 @@ router.post("/login", async (req, res) => {
     const [token, role] = req.headers["authorization"].split(" ");
     const payload = await getId(token);
     let exists = false;
-
     if (req.body?.role === roles.VENDOR)
       exists = await Vendor.exists({ phone: payload.phone_number });
     else if (req?.body?.role === roles.CUSTOMER)

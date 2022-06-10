@@ -77,42 +77,31 @@ router.put("/unfollow", authorize, async (req, res) => {
         connectionName: req.body?.connectionName,
       },
     };
-    console.log(80);
-    const vendor = await Vendor.findOne({
-      _id: connection.following.connectionId,
-    });
+
+    const vendor = await Vendor.findById(connection.following.connectionId);
 
     const followers = vendor.followers?.filter(
       (follower) => follower.connectionId.toString() != req.user?._id.toString()
     );
-    console.log(88);
-    await Vendor.findOneAndUpdate(
-      { _id: connection.following.connectionId },
-      {
-        followers: followers,
-      }
-    );
+
+    await Vendor.findByIdAndUpdate(connection.following.connectionId, {
+      followers: followers,
+    });
 
     const followings = req.user?.following.filter(
       (following) =>
         following.connectionId.toString() !=
         connection.following.connectionId.toString()
     );
-    console.log(101);
+
     if (req.role === roles.VENDOR)
-      await Vendor.findOneAndUpdate(
-        { _id: connection.followers.connectionId },
-        {
-          following: followings,
-        }
-      );
+      await Vendor.findByIdAndUpdate(connection.followers.connectionId, {
+        following: followings,
+      });
     else
-      await Customer.findOneAndUpdate(
-        { _id: connection.followers.connectionId },
-        {
-          following: followings,
-        }
-      );
+      await Customer.findByIdAndUpdate(connection.followers.connectionId, {
+        following: followings,
+      });
     respondWith(res, "Connection Dropped!");
   } catch (error) {
     rejectRequestWith(res, error.toString());
