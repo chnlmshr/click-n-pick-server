@@ -1,5 +1,3 @@
-const res = require("express/lib/response");
-
 module.exports = {
   roles: {
     VENDOR: "VENDOR",

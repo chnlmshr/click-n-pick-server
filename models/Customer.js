@@ -1,17 +1,20 @@
 const mongoose = require("mongoose");
 
 const CustomerSchema = mongoose.Schema({
-  name: {
+  _id: {
     type: String,
-    required: true,
   },
-  password: {
+  name: {
     type: String,
     required: true,
   },
   phone: {
     type: Number,
     required: true,
+    unique: true,
+  },
+  recoveryPhone: {
+    type: Number,
     unique: true,
   },
   profileImage: {
@@ -39,4 +42,5 @@ const CustomerSchema = mongoose.Schema({
     },
   },
 });
+
 module.exports = mongoose.model("Customer", CustomerSchema);

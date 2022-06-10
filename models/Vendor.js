@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 
 const VendorSchema = mongoose.Schema({
+  _id: {
+    type: String,
+  },
   shopName: {
     type: String,
     required: true,
@@ -9,10 +12,6 @@ const VendorSchema = mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
   },
   profileImage: {
     type: String,
@@ -33,7 +32,10 @@ const VendorSchema = mongoose.Schema({
   },
   phone: {
     type: Number,
-    required: true,
+    unique: true,
+  },
+  recoveryPhone: {
+    type: Number,
     unique: true,
   },
   // 0 => Doesn't exist; 1 => First Pay; 2 => Lucky Number; 3 => School Roll Number;

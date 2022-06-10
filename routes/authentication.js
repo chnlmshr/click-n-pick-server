@@ -1,78 +1,72 @@
-const router = require("express").Router(),
+const authorize = require("../authorize"),
+  router = require("express").Router(),
   Vendor = require("../models/Vendor"),
   Customer = require("../models/Customer"),
-  jwt = require("jsonwebtoken"),
-  bcrypt = require("bcryptjs"),
   { roles, rejectRequestWith, respondWith } = require("../logistics"),
-  authorize = require("../authorize");
-
-// Signing Up
+  getId = require("../firebase"),
+  jwt = require("jsonwebtoken");
 
 router.post("/signup", async (req, res) => {
   try {
-    const securePassword = await bcrypt.hash(req.body?.password, 8);
+    const [token, role] = req.headers["authorization"].split(" ");
+    const payload = await getId(token);
+
+    console.log(payload);
 
     if (req.body?.role === roles.VENDOR) {
       let vendorExists = await Vendor.exists({ username: req.body?.username });
 
       if (vendorExists) throw "Username already exists!";
 
-      vendorExists = await Vendor.exists({ phone: req.body?.phone });
+      vendorExists = await Vendor.exists({ phone: payload.phone_number });
 
       if (vendorExists) throw "Phone already exists!";
 
       await Vendor.create({
+        _id: payload.uid,
         shopName: req.body?.shopName,
         username: req.body?.username,
-        password: securePassword,
-        phone: req.body?.phone,
+        phone: payload.phone_number,
         location: {
           city: req.body?.city,
           state: req.body?.state,
           pincode: req.body?.pincode,
         },
       });
-
-      respondWith(res, "Vendor Created!");
     } else if (req?.body?.role === roles.CUSTOMER) {
       await Customer.create({
+        _id: payload.uid,
         name: req.body?.name,
-        password: securePassword,
-        phone: req.body?.phone,
+        phone: payload.phone_number,
         location: {
           city: req.body?.city,
           state: req.body?.state,
           pincode: req.body?.pincode,
         },
       });
-
-      respondWith(res, "Customer Created!");
     } else throw "Invalid Role!";
+    const authtoken = jwt.sign({ _id: payload.uid }, process.env.JWT_SECRET);
+    respondWith(res, authtoken);
   } catch (error) {
     rejectRequestWith(res, error.toString());
   }
 });
 
-// Logging In
-
 router.post("/login", async (req, res) => {
   try {
-    let user = false;
-    if (req.body?.role === roles.VENDOR)
-      user = await Vendor.findOne({ phone: req.body?.phone });
-    else if (req.body?.role === roles.CUSTOMER)
-      user = await Customer.findOne({ phone: req.body?.phone });
-    if (user) {
-      const correctPassword = await bcrypt.compare(
-        req.body?.password,
-        user.password
-      );
+    const [token, role] = req.headers["authorization"].split(" ");
+    const payload = await getId(token);
+    let exists = false;
 
-      if (correctPassword) {
-        const authtoken = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
-        respondWith(res, authtoken);
-      } else throw "Invalid Credentials";
-    } else throw "Invalid Credentials";
+    if (req.body?.role === roles.VENDOR)
+      exists = await Vendor.exists({ phone: payload.phone_number });
+    else if (req?.body?.role === roles.CUSTOMER)
+      exists = await Customer.exists({ phone: payload.phone_number });
+    else throw "Invalid Role!";
+    if (exists) {
+      const authtoken = jwt.sign({ _id: payload.uid }, process.env.JWT_SECRET);
+      respondWith(res, authtoken);
+    } else throw "User Unauthorized!";
   } catch (error) {
     rejectRequestWith(res, error.toString());
   }

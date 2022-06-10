@@ -1,11 +1,10 @@
-const authorize = require("./authorize");
-const { rejectRequestWith, respondWith } = require("./logistics");
-
 const express = require("express"),
   mongoose = require("mongoose"),
   cors = require("cors"),
   app = express(),
-  { generateUploadURL } = require("./s3");
+  { generateUploadURL } = require("./s3"),
+  authorize = require("./authorize"),
+  { rejectRequestWith, respondWith } = require("./logistics");
 
 require("dotenv").config();
 
