@@ -13,10 +13,6 @@ const VendorSchema = mongoose.Schema({
     required: true,
     unique: true,
   },
-  password: {
-    type: String,
-    required: true,
-  },
   profileImage: {
     type: String,
   },
