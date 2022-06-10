@@ -31,7 +31,7 @@ const VendorSchema = mongoose.Schema({
     },
   },
   phone: {
-    type: Number,
+    type: String,
     unique: true,
   },
   recoveryPhone: {

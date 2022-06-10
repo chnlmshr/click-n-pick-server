@@ -6,7 +6,7 @@ const PostSchema = mongoose.Schema({
     required: true,
   },
   vendor: {
-    type: mongoose.Types.ObjectId,
+    type: String,
     ref: "Vendor",
     required: true,
   },

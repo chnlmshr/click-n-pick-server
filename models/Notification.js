@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const NotificationSchema = mongoose.Schema({
   fromConnectionId: {
-    type: mongoose.Types.ObjectId,
+    type: String,
     required: true,
   },
   fromConnectionName: {
@@ -10,7 +10,7 @@ const NotificationSchema = mongoose.Schema({
     required: true,
   },
   toConnection: {
-    type: mongoose.Types.ObjectId,
+    type: String,
     required: true,
   },
   action: {
