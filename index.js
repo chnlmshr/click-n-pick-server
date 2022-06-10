@@ -24,7 +24,7 @@ if (process.env.NODE_ENV !== "test") {
 
 app.get("/", (req, res) =>
   res.send(
-    "Welcome to Click and Pick API 👋.\n Visit https://chnlmshr.github.io/click-n-pick-landing/ to know more 🤗"
+    "Welcome to Click and Pick API 👋.<br> Visit https://chnlmshr.github.io/click-n-pick-landing/ to know more 🤗"
   )
 );
 
