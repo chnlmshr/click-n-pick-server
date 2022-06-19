@@ -13,10 +13,6 @@ const CustomerSchema = mongoose.Schema({
     required: true,
     unique: true,
   },
-  recoveryPhone: {
-    type: Number,
-    unique: true,
-  },
   profileImage: {
     type: String,
   },
