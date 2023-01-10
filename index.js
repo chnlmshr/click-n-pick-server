@@ -22,6 +22,12 @@ if (process.env.NODE_ENV !== "test") {
     .catch((err) => console.log(err));
 }
 
+if (process.env.NODE_ENV !== "test") {
+  app.listen(process.env.PORT || 3001, () => {
+    console.log(`Server running on ${process.env.PORT || 3001}`);
+  });
+}
+
 app.get("/", (req, res) =>
   res.send(
     "Welcome to Click and Pick API 👋.<br> Visit https://chnlmshr.github.io/click-n-pick-landing/ to know more 🤗"
@@ -46,10 +52,5 @@ app.use("/search", require("./routes/search"));
 
 app.use((req, res) => res.send("Sorry! This Route doesn't exist 😔"));
 
-if (process.env.NODE_ENV !== "test") {
-  app.listen(process.env.PORT || 3001, () => {
-    console.log(`Server running on ${process.env.PORT || 3001}`);
-  });
-}
 
 module.exports = app;
