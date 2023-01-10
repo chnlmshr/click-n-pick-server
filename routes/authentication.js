@@ -3,7 +3,7 @@ const authorize = require("../authorize"),
   Vendor = require("../models/Vendor"),
   Customer = require("../models/Customer"),
   { roles, rejectRequestWith, respondWith } = require("../logistics"),
-  getId = require("../firebase"),
+  getId = require("../firebase.js"),
   jwt = require("jsonwebtoken");
 
 router.post("/signup", async (req, res) => {
