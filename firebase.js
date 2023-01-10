@@ -15,7 +15,7 @@ const firebaseAdmin = require("firebase-admin"),
   { cert } = require("firebase-admin/app"),
   // serviceAccount = require(),
   firebaseApp = firebaseAdmin.initializeApp({
-    credential: cert({serviceAccount}),
+    credential: cert(serviceAccount),
   });
 
 module.exports = async (token) => {
