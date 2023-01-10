@@ -3,13 +3,14 @@ const authorize = require("../authorize"),
   Vendor = require("../models/Vendor"),
   Customer = require("../models/Customer"),
   { roles, rejectRequestWith, respondWith } = require("../logistics"),
-  getId = require("../firebase"),
+  // getId = require("../firebase"),
   jwt = require("jsonwebtoken");
 
 router.post("/signup", async (req, res) => {
   try {
     const [token, role] = req.headers["authorization"].split(" ");
-    const payload = await getId(token);
+    // const payload = await getId(token);
+    const payload = {};
 
     console.log(payload);
 
@@ -55,7 +56,8 @@ router.post("/signup", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const [token, role] = req.headers["authorization"].split(" ");
-    const payload = await getId(token);
+    // const payload = await getId(token);
+    const payload = {};
     let exists = false;
     if (req.body?.role === roles.VENDOR)
       exists = await Vendor.exists({ phone: payload.phone_number });
